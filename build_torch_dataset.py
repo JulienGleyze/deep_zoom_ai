@@ -8,12 +8,13 @@ from torch.nn.functional import interpolate
 
 def load_images_as_tensor(folder_path):
     images = []
+    transform = transforms.ToTensor()
     for filename in tqdm(os.listdir(folder_path), desc="Loading patches"):
         if filename.endswith(('.png')):
             image_path = os.path.join(folder_path, filename)
             image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED) 
             images.append(image)
-    return torch.stack([transforms.ToTensor()(img) for img in tqdm(images, desc="Building tensor")])
+    return torch.stack([transform(img) for img in tqdm(images, desc="Building tensor")])
 
 
 if __name__ == '__main__':

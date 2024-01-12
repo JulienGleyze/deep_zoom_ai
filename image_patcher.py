@@ -12,9 +12,9 @@ def patch_image(input_images_folder, img_name, hr_out_folder, blur_out_folder, c
 
     img = cv2.imread(img_path)
 
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)[:, :, 0] #Y channel
+    #img = cv2.cvtColor(img, cv2.COLOR_BGR2YCR_CB)
 
-    width, height = img.shape
+    width, height, _ = img.shape
     
     num_chunks_x = height // chunk_size
     num_chunks_y = width // chunk_size
@@ -28,8 +28,7 @@ def patch_image(input_images_folder, img_name, hr_out_folder, blur_out_folder, c
             bottom = top + chunk_size
             
             hr_patch = img[top:bottom, left:right]
-            blur_patch = cv2.filter2D(hr_patch, -1, blur_kernel)
-            
+            blur_patch = cv2.filter2D(hr_patch, -1, blur_kernel)[::2,::2] # divise resolution by 2
             hr_patch_path = os.path.join(hr_out_folder, f"chunk_{i}_{j}_crop_{img_name}")
             blur_patch_path = os.path.join(blur_out_folder, f"chunk_{i}_{j}_crop_{img_name}")
 
@@ -65,4 +64,4 @@ if __name__ == '__main__':
         p.starmap(patch_image, [(input_images_folder, 
                                    img, 
                                    hr_output_images_folder,
-                                   blur_output_images_folder, 256, blur_kernel) for img in input_images])
+                                   blur_output_images_folder, 256, blur_kernel) for img in input_images[:-8]])

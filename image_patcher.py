@@ -64,4 +64,4 @@ if __name__ == '__main__':
         p.starmap(patch_image, [(input_images_folder, 
                                    img, 
                                    hr_output_images_folder,
-                                   blur_output_images_folder, 256, blur_kernel) for img in input_images[:-8]])
+                                   blur_output_images_folder, 256, blur_kernel) for img in input_images[:-10]])

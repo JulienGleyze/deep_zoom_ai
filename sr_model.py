@@ -17,23 +17,6 @@ class CNNSuperResolutionModel(nn.Module):
     def forward(self, X:torch.Tensor) -> torch.Tensor:
             y = self.layers1(X)
             return y
-        
-class perChanModel(nn.Module):
-    def __init__(self):
-        super(perChanModel, self).__init__()
-        self.Rlayer = CNNSuperResolutionModel()
-        self.Glayer = CNNSuperResolutionModel()
-        self.Blayer = CNNSuperResolutionModel()
-    
-    def forward(self, X:torch.Tensor) -> torch.Tensor:
-            Rx = self.Rlayer(X[:, 0].unsqueeze(1))
-            print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-            Ry = self.Glayer(X[:, 1].unsqueeze(1))
-            print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-            Rz = self.Blayer(X[:, 2].unsqueeze(1))
-            print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-            return torch.cat(Rx, Ry, Rz, dim=1)
-    
 
 class FSRCNN(nn.Module):
     """
@@ -58,6 +41,10 @@ sqr
 
         # Mapping layer.
         self.map = nn.Sequential(
+            nn.Conv2d(12, 12, (3, 3), (1, 1), (1, 1)),
+            nn.PReLU(12),
+            nn.Conv2d(12, 12, (3, 3), (1, 1), (1, 1)),
+            nn.PReLU(12),
             nn.Conv2d(12, 12, (3, 3), (1, 1), (1, 1)),
             nn.PReLU(12),
             nn.Conv2d(12, 12, (3, 3), (1, 1), (1, 1)),
